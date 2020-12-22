@@ -1,37 +1,26 @@
 import React from 'react'
-import {Card, CardMedia, CardContent, CardActions, Typography, IconButton} from '@material-ui/core'
-import {AddShoppingCart} from '@material-ui/icons'
-// import classes from '*.module.css'
+import { Card, Button  } from 'react-bootstrap';
 
-import useStyles from './styles'
 
-const Product = ({product}) => {
-    const classes = useStyles();
+const Product = ({product, onAddToCart}) => {
 
     return (
-        <Card className={classes.root}>
-            <CardMedia className={classes.media} image={product.image} title={product.name} />
-            <CardContent>
-                <div className={classes.CardContent}>
-                    <Typography variant="h5" gutterBottom>
-                        {product.name}
-                    </Typography>
-
-                    <Typography variant="h5" >
-                        {product.price}
-                    </Typography>
-                </div>
-                <Typography variant="h2" color="textSecondary" > {product.description} </Typography>
-
-            </CardContent>
-
-            <CardActions disableSpacing className={classes.CardActions}>
-                <IconButton aria-label="add to cart">
-                    <AddShoppingCart/>
-                </IconButton>
-            </CardActions>
-            
-        </Card>
+      
+          <div>
+            <Card item key={product.id}>
+            <Card.Img variant="top" src={product.media.source} />
+            <Card.Body>
+              <Card.Title>{product.name}</Card.Title>
+              <Card.Text>
+              { product.description}
+              </Card.Text>
+            </Card.Body>
+            <Card.Footer>
+              <small className="text-muted">{product.price.formatted_with_symbol}</small>
+              <Button variant="secondary" onClick={() => onAddToCart(product.id, 1)}>add to cart</Button>{' '}
+            </Card.Footer>
+            </Card>
+          </div>
     )
 }
 
