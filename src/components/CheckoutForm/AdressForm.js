@@ -1,12 +1,14 @@
-import React, {useState} from 'react'
-import { MenuItem, Grid, Typography} from '@material-ui/core'
+import React, {useState, useEffect} from 'react'
+import { MenuItem, Grid, Typography, InputLabel, Select} from '@material-ui/core'
 import {useForm, FormProvider} from 'react-hook-form'
 import FormInput from './FormInput'
 
-import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+
+
+// import InputLabel from '@material-ui/core/InputLabel';
+// import FormHelperText from '@material-ui/core/FormHelperText';
+// import FormControl from '@material-ui/core/FormControl';
+// import Select from '@material-ui/core/Select';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -23,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const AdressForm = () => {
+const AdressForm = ({checkoutToken}) => {
     const methods = useForm();
 
     const [ShippingCountries, setShippingCountries] = useState([]);
@@ -33,10 +35,20 @@ const AdressForm = () => {
     const [Shippingoptions, setShippingoptions] = useState([]);
     const [Shippingoption, setShippingoption] = useState('');
 
-    const fetshShippinCountries = async (checkoutTokenId) => {
+    const countries = Object.entries(ShippingCountries).map( ([code, name]) => ({id: code, label: name }));
+    console.log(countries)
+
+    const fetshShippingCountries = async (checkoutTokenId) => {
         const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId)
+        // console.log(countries)
         setShippingCountries(countries)
+        setShippingCountry(Object.keys(countries)[0]);
+
     }
+
+    useEffect(() => {
+        fetshShippingCountries(checkoutToken.id);
+    }, [])
 
 
     return (
@@ -52,17 +64,20 @@ const AdressForm = () => {
                         <FormInput required name='city' label='city' />
                         <FormInput required name='ZIP' label='ZIP' />
 
-                        {/* <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6}>
                             <InputLabel> shipping country </InputLabel>
 
-                            <Select value={} fullWidth onChange={}>
-                                <MenuItem key={} value={}>
-                                    select me
-                                </MenuItem>
+                            <Select value={ShippingCountry} fullWidth onChange={(e)=> setShippingCountry(e.target.value)}>
+                                {countries.map( (country) => (
+                                    <MenuItem key={country.id} value={country.label}>
+                                        {country.label}
+                                    </MenuItem>
+                                ) )}
+                                
                             </Select>
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        {/* <Grid item xs={12} sm={6}>
                             <InputLabel> shipping subdivision </InputLabel>
 
                             <Select value={} fullWidth onChange={}>
