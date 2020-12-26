@@ -10,6 +10,10 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 function App() {
     const [products, setproducts] = useState([])
     const [cart, setCart] = useState({})
+    const [Order, setOrder] = useState({})
+    const [ErrorMessage, setErrorMessage] = useState('')
+
+
 
 
     const fetchProducts = async () => {
@@ -42,6 +46,22 @@ function App() {
         setCart(cart)
     }
 
+    const refreshCart = async () => { 
+        const newCart  = await commerce.cart.refresh()
+        setCart(newCart)
+    }
+
+    const handleCaptureCheckout = async (checkoutTokenId, NewOrder) => { 
+        try{
+            const incomingOrder = await commerce.checkout.capture(checkoutTokenId, NewOrder)
+            setOrder(incomingOrder)
+            refreshCart();
+        }
+        catch(error){
+            setErrorMessage(error.data.error.messsage);
+        }
+    }
+
     // like did mount
     useEffect(() => {
         fetchProducts();
@@ -68,7 +88,13 @@ function App() {
                 </Route>
 
                 <Route exact path='/checkout'>
-                    <Checkout cart={cart} />
+                    <Checkout
+                        cart={cart}
+                        order={Order}
+                        onCaptureCheckout={handleCaptureCheckout}
+                        error={ErrorMessage}
+
+                    />
                 </Route>
             </Switch>
              

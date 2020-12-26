@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import { MenuItem, Grid, Typography, InputLabel, Select} from '@material-ui/core'
+import { Button, MenuItem, Grid, Typography, InputLabel, Select} from '@material-ui/core'
 import {useForm, FormProvider} from 'react-hook-form'
 import FormInput from './FormInput'
+import {Link} from 'react-router-dom'
 
 
 
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const AdressForm = ({checkoutToken}) => {
+const AdressForm = ({checkoutToken, next}) => {
     const methods = useForm();
 
     const [ShippingCountries, setShippingCountries] = useState([]);
@@ -36,33 +37,60 @@ const AdressForm = ({checkoutToken}) => {
     const [Shippingoption, setShippingoption] = useState('');
 
     const countries = Object.entries(ShippingCountries).map( ([code, name]) => ({id: code, label: name }));
-    console.log(countries)
+    const subdivisions = Object.entries(Shippingsubdivisions).map( ([code, name]) => ({id: code, label: name }));
+    const options = Shippingoptions.map( (SO) => ({id: SO.id, label: `${SO.description} - (${SO.price.formatted_with_symbols})`  }) );
+
+
+    // console.log(subdivisions)
+    
 
     const fetshShippingCountries = async (checkoutTokenId) => {
         const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId)
         // console.log(countries)
         setShippingCountries(countries)
         setShippingCountry(Object.keys(countries)[0]);
-
     }
+
+    const fetshSubdivisions = async (countryCode) => {
+        const { subdivisions } = await commerce.services.localeListSubdivisions(countryCode)
+        // console.log(countries)
+        setShippingsubdivisions(subdivisions)
+        setShippingsubdivision(Object.keys(subdivisions)[0]);
+    }
+
+    const fetshShippingOptions = async (checkoutTokenId, country, region = null) => {
+        const options  = await commerce.checkout.getShippingOptions(checkoutTokenId, {country, region});
+        // console.log(countries)
+        setShippingoptions(options);
+        setShippingoption(options[0].id);
+    }
+    
 
     useEffect(() => {
         fetshShippingCountries(checkoutToken.id);
     }, [])
+
+    useEffect(() => {
+        if (ShippingCountry) fetshSubdivisions(ShippingCountry);
+    }, [ShippingCountry])
+
+    useEffect(() => {
+        if (Shippingsubdivision) fetshShippingOptions(checkoutToken.id, ShippingCountry, Shippingsubdivision );
+    }, [Shippingsubdivision])
 
 
     return (
         <>
             <Typography variant="h6" gutterBottom> shipping address </Typography>
             <FormProvider {...methods}>
-                <form onSubmit=''>
+                <form onSubmit={ methods.handleSubmit( (data) => next({...data, ShippingCountry, Shippingsubdivision, Shippingoption}) ) }>
                     <Grid container spacing={3}>
-                        <FormInput required name='first name' label='First Name' />
-                        <FormInput required name='last name' label='last Name' />
-                        <FormInput required name='adresse 1' label='adresse 1' />
-                        <FormInput required name='email name' label='email' />
-                        <FormInput required name='city' label='city' />
-                        <FormInput required name='ZIP' label='ZIP' />
+                        <FormInput name='firstName' label='First Name' />
+                        <FormInput name='lastName' label='last Name' />
+                        <FormInput name='adresse1' label='adresse 1' />
+                        <FormInput name='email' label='email' />
+                        <FormInput name='city' label='city' />
+                        <FormInput name='ZIP' label='ZIP' />
 
                         <Grid item xs={12} sm={6}>
                             <InputLabel> shipping country </InputLabel>
@@ -77,27 +105,38 @@ const AdressForm = ({checkoutToken}) => {
                             </Select>
                         </Grid>
 
-                        {/* <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6}>
                             <InputLabel> shipping subdivision </InputLabel>
 
-                            <Select value={} fullWidth onChange={}>
-                                <MenuItem key={} value={}>
-                                    select me
-                                </MenuItem>
+                            <Select value={Shippingsubdivision} fullWidth onChange={(e) => setShippingsubdivision(e.target.value)}>
+                                {subdivisions.map((subdiv) => (
+                                    <MenuItem key={subdiv.id} value={subdiv.label}>
+                                        {subdiv.label}
+                                    </MenuItem>
+                                ))}
+                                
                             </Select>
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
                             <InputLabel> shipping options </InputLabel>
 
-                            <Select value={} fullWidth onChange={}>
-                                <MenuItem key={} value={}>
-                                    select me
-                                </MenuItem>
+                            <Select value={Shippingoption} fullWidth onChange={(e)=>setShippingoption(e.target.value)}>
+                                {options.map((opt) => (
+                                    <MenuItem key={opt.id} value={opt.label}>
+                                        {opt.label}
+                                    </MenuItem>
+                                ))}
+                                
                             </Select>
-                        </Grid> */}
+                        </Grid>
 
                     </Grid>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Button component={Link} to='/cart' variant='outlined'> back to cart </Button>
+                        <Button type='submit' variant='contained' color='primary'> next </Button>                        
+                    </div>
                 </form>
             </FormProvider>
         </>
