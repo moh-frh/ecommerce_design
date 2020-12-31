@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Button, Nav, Navbar, NavDropdown, Form, FormControl, Badge  } from 'react-bootstrap';
 import {Link, useLocation } from 'react-router-dom'
+import HomeIcon from '@material-ui/icons/Home';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const NavbarComp = ({totalItems}) => {
   const location = useLocation();
@@ -15,7 +17,7 @@ const NavbarComp = ({totalItems}) => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="#home"><Link to='/'> Home </Link></Nav.Link>
+          <Nav.Link href="#home"><Link to='/'> <HomeIcon /> Home  </Link></Nav.Link>
           <Nav.Link href="#link">Link</Nav.Link>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -31,7 +33,7 @@ const NavbarComp = ({totalItems}) => {
 
             <Link to='/cart'>
             <Button variant="outline-success">
-              cart <Badge variant="dark">{totalItems}</Badge> 
+              <ShoppingCartIcon/>cart <Badge variant="dark">{totalItems}</Badge> 
               <span className="sr-only">unread messages</span>
             </Button>
             </Link>

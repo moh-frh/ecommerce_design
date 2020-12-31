@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, Button  } from 'react-bootstrap';
+import Grid from '@material-ui/core'
 
 
 const Product = ({product, onAddToCart}) => {
@@ -14,9 +15,10 @@ const Product = ({product, onAddToCart}) => {
               <Card.Text>
               { product.description}
               </Card.Text>
+              <small className="text-muted">{product.price.formatted_with_symbol}</small> 
+
             </Card.Body>
             <Card.Footer>
-              <small className="text-muted">{product.price.formatted_with_symbol}</small>
               <Button variant="secondary" onClick={() => onAddToCart(product.id, 1)}>add to cart</Button>{' '}
             </Card.Footer>
             </Card>

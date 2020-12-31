@@ -3,6 +3,7 @@ import { Paper, Stepper, Step, StepLabel, Typography,  } from '@material-ui/core
 import AdressForm from './AdressForm'
 import Payment from './Payment'
 import Confirmation from './Payment'
+import {useHistory} from 'react-router-dom'
 
 import useStyles from './styles'
 
@@ -12,6 +13,7 @@ import {commerce} from '../../lib/commerce'
 const steps = ['shiping address', 'payement details']
 
 const Checkout = ({cart, order, onCaptureCheckout, error}) => {
+    // const history = useHistory()
     const [activeStep, setactiveStep] = useState(0)
     const [checkoutToken, setCheckoutToken] = useState(null)
     
@@ -25,6 +27,7 @@ const Checkout = ({cart, order, onCaptureCheckout, error}) => {
                 const token = await commerce.checkout.generateToken(cart.id, {  type: 'cart'  });
                 setCheckoutToken(token)
             }catch(error){
+                // history.pushState('/')
             }
         }
 
