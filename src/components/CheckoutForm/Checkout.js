@@ -39,7 +39,10 @@ const Checkout = ({cart, order, onCaptureCheckout, error}) => {
         activeStep === 0
             ? <AdressForm checkoutToken={checkoutToken} next={next} />
             : <Payment ShippingData={ShippingData} checkoutToken={checkoutToken} nextStep={nextStep} prevStep={prevStep} onCaptureCheckout={onCaptureCheckout} />
+            
         )
+
+    const Confirm = () => ( <Confirmation/> )    
 
     const nextStep = () =>  setactiveStep( (prevActiveStep) => prevActiveStep + 1 )
     const prevStep = () =>  setactiveStep( (prevActiveStep) => prevActiveStep - 1 )    

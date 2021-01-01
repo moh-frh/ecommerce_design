@@ -6,6 +6,7 @@ import {commerce} from './lib/commerce'
 import Cart from './components/Cart/Cart'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import Confirmation from './components/CheckoutForm/Confirmation'
 
 function App() {
     const [products, setproducts] = useState([])
@@ -96,6 +97,11 @@ function App() {
 
                     />
                 </Route>
+
+                <Route exact path='/confirm'>
+                    <Confirmation />
+                </Route>
+
             </Switch>
              
         </div>
